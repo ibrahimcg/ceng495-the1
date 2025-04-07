@@ -118,13 +118,19 @@ class AdminService:
 
     def _recalculate_user_rating(self, user_id):
         user = self.db.users.find_one({"_id": ObjectId(user_id)})
-        if user and 'reviews' in user and user['reviews']:
-            ratings = [r.get('rating', 0) for r in user['reviews'] if 'rating' in r]
-            avg_rating = sum(ratings) / len(ratings) if ratings else 0
-            self.db.users.update_one(
-                {"_id": ObjectId(user_id)},
-                {"$set": {"average_rating": round(avg_rating, 1)}}
-            )
+        if user:
+            if 'reviews' in user and user['reviews']:
+                ratings = [r.get('rating', 0) for r in user['reviews'] if 'rating' in r]
+                avg_rating = sum(ratings) / len(ratings) if ratings else 0
+                self.db.users.update_one(
+                    {"_id": ObjectId(user_id)},
+                    {"$set": {"average_rating": round(avg_rating, 1)}}
+                )
+            else:
+                self.db.users.update_one(
+                    {"_id": ObjectId(user_id)},
+                    {"$set": {"average_rating": 0}}
+                )
 
     def _recalculate_item_rating(self, item_id):
         item = self.db.items.find_one({"_id": ObjectId(item_id)})
