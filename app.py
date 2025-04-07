@@ -182,6 +182,18 @@ def profile():
     
     return render_template('user/profile.html', user=user)
 
+@app.route('/user/<username>')
+def user_profile(username):
+    user = db.users.find_one({"username": username})
+    
+    if not user:
+        flash('User not found', 'error')
+        return redirect(url_for('home'))
+    
+    user['_id'] = str(user['_id'])
+    
+    return render_template('user/profile.html', user=user)
+
 @app.route('/admin')
 def admin_dashboard():
     if 'user_id' not in session or not session.get('is_admin', False):

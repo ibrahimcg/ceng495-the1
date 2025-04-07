@@ -106,7 +106,7 @@
 {% for review in item.reviews %}
 <div class="card mb-3">
     <div class="card-header d-flex justify-content-between">
-        <span>{{ review.username }}</span>
+        <span><a href="{{ url_for('user_profile', username=review.username) }}" class="text-decoration-none">{{ review.username }}</a></span>
         {% if review.rating %}
         <span class="badge bg-warning text-dark">{{ review.rating }}/10</span>
         {% endif %}
