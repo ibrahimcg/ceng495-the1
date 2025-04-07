@@ -46,4 +46,4 @@ When an item gets deleted, their reviews and ratings on users are deleted, too. 
 
 Only admins can create new items. Only admins can remove items and users.
 
-I hold both reviews and ratings under one field named "reviews" in both items and users. But I divided "reviews" to two subfields. One being the "rating" and second being the "content" which is the review comment. 
+I hold both reviews and ratings under one field named "reviews" in both items and users. But I divided "reviews" to two subfields. One being the "rating" and second being the "content" which is the review comment. When a rating is given, the "rating" subfield of "reviews" is filled. If only the review comment is given then I hold them in "content" subfield of the rating. I designed like this in order to utilize MongoDB's stretchability.
