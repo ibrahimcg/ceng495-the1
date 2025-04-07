@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Cloud Market{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Cloud Market</h1>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Categories</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="{{ url_for('home') }}" class="btn {{ 'btn-primary' if not selected_category else 'btn-outline-primary' }}">All</a>
+                    {% for category in categories %}
+                    <a href="{{ url_for('home', category=category) }}" class="btn {{ 'btn-primary' if selected_category == category else 'btn-outline-primary' }}">
+                        {{ category }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    {% if items %}
+        {% for item in items %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                {% if item.image %}
+                <div class="bg-light p-3">
+                    <p class="mb-1"><strong>Image URL:</strong></p>
+                    <a href="{{ item.image }}" target="_blank" class="text-break small">{{ item.image }}</a>
+                </div>
+                {% else %}
+                <div class="bg-light d-flex align-items-center justify-content-center p-3">
+                    <span class="text-muted">No Image URL Available</span>
+                </div>
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ item.name }}</h5>
+                    <p class="card-text">{{ item.description[:100] }}{% if item.description|length > 100 %}...{% endif %}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-primary">${{ "%.2f"|format(item.price) }}</span>
+                        <span class="badge bg-secondary">{{ item.category }}</span>
+                    </div>
+                    {% if item.rating %}
+                    <div class="mt-2">
+                        <span class="badge bg-warning text-dark">Rating: {{ item.rating }}/10</span>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer">
+                    <a href="{{ url_for('item_detail', item_id=item._id) }}" class="btn btn-primary w-100">View Details</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                No items found. {% if selected_category %}Try a different category.{% endif %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}{{ item.name }} - Cloud Market{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        {% if item.image %}
+        <div class="bg-light p-3 rounded">
+            <p class="mb-1"><strong>Image URL:</strong></p>
+            <a href="{{ item.image }}" target="_blank" class="text-break">{{ item.image }}</a>
+        </div>
+        {% else %}
+        <div class="bg-light d-flex align-items-center justify-content-center rounded p-3">
+            <span class="text-muted">No Image URL Available</span>
+        </div>
+        {% endif %}
+    </div>
+    <div class="col-md-6">
+        <h1>{{ item.name }}</h1>
+        <p class="lead">{{ item.description }}</p>
+        
+        <div class="d-flex justify-content-between mb-3">
+            <h3 class="text-primary">${{ "%.2f"|format(item.price) }}</h3>
+            <span class="badge bg-secondary fs-6">{{ item.category }}</span>
+        </div>
+        
+        <p><strong>Seller:</strong> {{ item.seller }}</p>
+        
+        {% if item.category == 'GPS Sport Watches' and item.battery_life %}
+        <p><strong>Battery Life:</strong> {{ item.battery_life }} hours</p>
+        {% endif %}
+        
+        {% if item.category in ['Antique Furniture', 'Vinyls'] and item.age %}
+        <p><strong>Age:</strong> {{ item.age }} years</p>
+        {% endif %}
+        
+        {% if item.category in ['Antique Furniture', 'Running Shoes'] and item.material %}
+        <p><strong>Material:</strong> {{ item.material }}</p>
+        {% endif %}
+        
+        {% if item.category == 'Running Shoes' and item.size %}
+        <p><strong>Size:</strong> {{ item.size }}</p>
+        {% endif %}
+        
+        {% if item.rating %}
+        <div class="mb-3">
+            <h4>Rating: {{ item.rating }}/10 <small class="text-muted">({{ item.number_of_reviewers }} reviews)</small></h4>
+        </div>
+        {% endif %}
+        
+        {% if session.user_id %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Rate this Item</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('rate_item', item_id=item._id) }}">
+                    <div class="mb-3">
+                        <label for="rating" class="form-label">Your Rating (1-10)</label>
+                        <select class="form-select" id="rating" name="rating" required>
+                            {% for i in range(1, 11) %}
+                            <option value="{{ i }}">{{ i }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Rating</button>
+                </form>
+                <div class="d-flex gap-2">
+                    <form method="POST" action="{{ url_for('revoke_rating', item_id=item._id) }}">
+                        <button type="submit" class="btn btn-danger">Revoke Rating</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Write a Review</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('review_item', item_id=item._id) }}">
+                    <div class="mb-3">
+                        <label for="content" class="form-label">Your Review</label>
+                        <textarea class="form-control" id="content" name="content" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Review</button>
+                </form>
+                <div class="d-flex gap-2 mt-2">
+                    <form method="POST" action="{{ url_for('revoke_review', item_id=item._id) }}">
+                        <button type="submit" class="btn btn-danger">Revoke Review</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <a href="{{ url_for('login') }}">Login</a> to rate and review this item.
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% if item.reviews %}
+<h3 class="mt-5 mb-4">Reviews</h3>
+{% for review in item.reviews %}
+<div class="card mb-3">
+    <div class="card-header d-flex justify-content-between">
+        <span>{{ review.username }}</span>
+        {% if review.rating %}
+        <span class="badge bg-warning text-dark">{{ review.rating }}/10</span>
+        {% endif %}
+    </div>
+    <div class="card-body">
+        {% if review.content %}
+        <p class="card-text">{{ review.content }}</p>
+        {% else %}
+        <p class="card-text text-muted"><em>No written review</em></p>
+        {% endif %}
+    </div>
+    <div class="card-footer text-muted">
+        {% if review.date %}
+        {{ review.date.strftime('%B %d, %Y') }}
+        {% endif %}
+    </div>
+</div>
+{% endfor %}
+{% else %}
+<div class="alert alert-info mt-5">
+    No reviews yet. Be the first to review this item!
+</div>
+{% endif %}
+{% endblock %}

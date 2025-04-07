@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Add New Item - Admin{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Add New Item</h5>
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary btn-sm">Back to Dashboard</a>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('admin_add_item') }}">
+                    <!-- Basic fields -->
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Item Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="price" class="form-label">Price ($)</label>
+                        <input type="number" class="form-control" id="price" name="price" step="0.01" min="0" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Category</label>
+                        <select class="form-select" id="category" name="category" required onchange="showCategoryFields()">
+                            <option value="" selected disabled>Select a category</option>
+                            <option value="Vinyls">Vinyls</option>
+                            <option value="Antique Furniture">Antique Furniture</option>
+                            <option value="GPS Sport Watches">GPS Sport Watches</option>
+                            <option value="Running Shoes">Running Shoes</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="seller" class="form-label">Seller</label>
+                        <input type="text" class="form-control" id="seller" name="seller" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="image" class="form-label">Image URL</label>
+                        <input type="url" class="form-control" id="image" name="image" required>
+                    </div>
+                    
+                    <!-- Category-specific fields -->
+                    <div id="battery-life-field" class="mb-3 category-field" style="display: none;">
+                        <label for="battery_life" class="form-label">Battery Life (hours)</label>
+                        <input type="number" class="form-control" id="battery_life" name="battery_life">
+                    </div>
+                    
+                    <div id="age-field" class="mb-3 category-field" style="display: none;">
+                        <label for="age" class="form-label">Age (years)</label>
+                        <input type="number" class="form-control" id="age" name="age">
+                    </div>
+                    
+                    <div id="size-field" class="mb-3 category-field" style="display: none;">
+                        <label for="size" class="form-label">Size</label>
+                        <input type="text" class="form-control" id="size" name="size">
+                    </div>
+                    
+                    <div id="material-field" class="mb-3 category-field" style="display: none;">
+                        <label for="material" class="form-label">Material</label>
+                        <input type="text" class="form-control" id="material" name="material">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Add Item</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function showCategoryFields() {
+        // Hide all category-specific fields
+        document.querySelectorAll('.category-field').forEach(field => {
+            field.style.display = 'none';
+        });
+        
+        // Get selected category
+        const category = document.getElementById('category').value;
+        
+        // Show relevant fields based on category
+        if (category === 'GPS Sport Watches') {
+            document.getElementById('battery-life-field').style.display = 'block';
+        }
+        
+        if (category === 'Vinyls' || category === 'Antique Furniture') {
+            document.getElementById('age-field').style.display = 'block';
+        }
+        
+        if (category === 'Running Shoes') {
+            document.getElementById('size-field').style.display = 'block';
+        }
+        
+        if (category === 'Antique Furniture' || category === 'Running Shoes') {
+            document.getElementById('material-field').style.display = 'block';
+        }
+    }
+</script>
+{% endblock %}

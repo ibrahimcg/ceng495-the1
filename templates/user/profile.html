@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - {{ user.username }}{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">{{ user.username }}'s Profile</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">User Information</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Username:</strong> {{ user.username }}</p>
+                <p><strong>Role:</strong> {% if user.is_admin %}Admin{% else %}Regular User{% endif %}</p>
+                <p><strong>Average Rating:</strong> {{ user.average_rating|default('No ratings yet') }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">My Reviews</h5>
+            </div>
+            <div class="card-body">
+                {% if user.reviews and user.reviews|length > 0 %}
+                <div class="list-group">
+                    {% for review in user.reviews %}
+                    <div class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between mb-2">
+                            <h5 class="mb-1">{{ review.item_name }}</h5>
+                            {% if review.rating %}
+                            <span class="badge bg-warning text-dark">{{ review.rating }}/10</span>
+                            {% endif %}
+                        </div>
+                        {% if review.content %}
+                        <p class="mb-1">{{ review.content }}</p>
+                        {% else %}
+                        <p class="mb-1 text-muted"><em>No written review</em></p>
+                        {% endif %}
+                        {% if review.date %}
+                        <small class="text-muted">{{ review.date.strftime('%B %d, %Y') }}</small>
+                        {% endif %}
+                        <div class="mt-2">
+                            <a href="{{ url_for('item_detail', item_id=review.item_id) }}" class="btn btn-sm btn-outline-primary">View Item</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    You haven't reviewed any items yet.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
